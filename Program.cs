@@ -3,67 +3,31 @@
 
 namespace SharpTasks
 {
-    enum TaskType : uint {
-        CHECK = 0, // Checkbox | Indica se foi finalizada (marcada) ou não
-    };
+    class Program {
+        static void Main(string[] args) {
+            TaskManager task_mgr = new TaskManager();
 
-    struct Task {
-        public TaskType type;
-        public string name;
+            Testes(ref task_mgr);
 
-        public Task(TaskType _type, string _name)
-        {
-            type = _type;
-            name = _name;
+            Menu menu = new Menu(ref task_mgr);
+            menu.Init();
         }
-    }
 
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            // Índice do último item 'válido' do vetor (não necessariamente o item que se encontra em 'tamanho-1')
-            // Inicia -1 pois não existe nenhum item em 'tasks'
-            int last_index = -1;
+        static void Testes(ref readonly TaskManager task_mgr) {
+            Task[] tasks = new Task[4];
 
-            Task[] tasks = {};
+            tasks[0] = new Checkbox("Batatao");
+            tasks[1] = new Checkbox("Lavar a casa");
+            tasks[2] = new Checkbox("Zazazaz");
+            tasks[3] = new Checkbox("AAAAAAAAAAAA");
 
-            /*
-             * TESTES
-             *
-
-            Task task = new Task(TaskType.CHECK, "AAAAAA");
-
-            AddTask(task);
-            PrintTasks();
-            AddTask(task);
-            PrintTasks();
-            AddTask(task);
-            PrintTasks();
-            */
-
-            void AddTask(Task task)
-            {
-                // Redimensionar (dobrar) o array caso não haja mais espaço
-                if (last_index+1 >= tasks.Length)
-                {
-                    int new_size = (tasks.Length==0 ? 1 : tasks.Length)*2;
-                    Array.Resize(ref tasks, new_size);
-                }
-
-                last_index++;
-                tasks[last_index] = task;
+            foreach (Task t in tasks) {
+                task_mgr.AddTask(t);
             }
 
-            void PrintTasks()
-            {
-                for (int i = 0; i < tasks.Length; ++i)
-                {
-                    Console.WriteLine("Type: {0}", tasks[i].type);
-                    Console.WriteLine("Name: {0}", tasks[i].name);
-                    Console.WriteLine();
-                }
-            }
+            task_mgr.GetTasks()[0].Execute();
+
+            task_mgr.RemoveTask(2);
         }
     }
 }
